@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2042
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinIsoMount", "WinIsoMount\WinIsoMount.csproj", "{727B475A-98E0-4B14-A878-C6E33B318089}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{727B475A-98E0-4B14-A878-C6E33B318089}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{727B475A-98E0-4B14-A878-C6E33B318089}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{727B475A-98E0-4B14-A878-C6E33B318089}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{727B475A-98E0-4B14-A878-C6E33B318089}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {895946B1-6197-41BC-B93B-0BC3C98791E3}
+	EndGlobalSection
+EndGlobal
