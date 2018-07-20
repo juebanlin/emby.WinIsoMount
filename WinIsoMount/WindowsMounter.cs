@@ -43,8 +43,20 @@ namespace WinIsoMount
                 Logger.Debug("isoManager init:");
             }
             Logger.Debug("**********************WinIsoMount inited");
-            Logger.Debug(MountUtil.Test());
-            Logger.Debug(MountUtil.TestMount());
+            try
+            {
+                string path = "D:\\test\\test.iso";
+                Logger.Debug("**********************WinIsoMount test path:"+ path);
+                WindowsMount w = new WindowsMount(this, Logger, path);
+                w.Mount();
+                string testPath = w.MountedPath;
+                w.UnMount();
+                Logger.Debug("**********************testMountPath success");
+            }
+            catch (Exception ex)
+            {
+                Logger.Info( "**********************testMountPath fail,ex:{0}",ex.Message);
+            }
         }
 
         #endregion
@@ -71,7 +83,7 @@ namespace WinIsoMount
             bool isIsoPath = string.Equals(Path.GetExtension(path), ".iso", StringComparison.OrdinalIgnoreCase);
             if (!isIsoPath)
             {
-                Logger.Debug("is not isoPath:[{1}]", path);
+                Logger.Debug("is not isoPath:"+path);
                 return false;
             }
             return true;
@@ -85,7 +97,7 @@ namespace WinIsoMount
         /// <returns></returns>
         public Task<IIsoMount> Mount(string isoPath, CancellationToken cancellationToken)
         {
-            return new Task<IIsoMount>(() => { return doMountISO(isoPath); });
+            return new Task<IIsoMount>(() => { return DoMountISO(isoPath); });
         }
         #endregion
 
@@ -93,7 +105,6 @@ namespace WinIsoMount
 
         public void Dispose()
         {
-            // Suppress finalization.
             GC.SuppressFinalize(this);
         }
 
@@ -101,38 +112,7 @@ namespace WinIsoMount
 
         #region Internal Methods
 
-        /// <summary>
-        /// –∂‘ÿƒ≥∏ˆπ“‘ÿ
-        /// </summary>
-        /// <param name="mount"></param>
-        internal void OnUnmount(WindowsMount mount)
-        {
-            if (mount != null)
-            {
-                Logger.Info(
-                    "[{0}] Attempting to unmount ISO [{1}] mounted on [{2}].",
-                    Name,
-                    mount.IsoPath,
-                    mount.MountedPath
-                );
-                try
-                {
-                    DoUnMountISO(mount.IsoPath);
-                }
-                catch (Exception ex)
-                {
-                    Logger.Info(
-                        "[{0}] Unhandled exception removing mount point, exception is [{1}].",
-                        Name,
-                        ex.Message
-                    );
-                }
-            }
-            else
-            {
-                throw new ArgumentNullException(nameof(mount));
-            }
-        }
+  
 
         #endregion
 
@@ -146,26 +126,22 @@ namespace WinIsoMount
         /// <param name="isoPath"></param>
         /// <param name="mountedISO"></param>
         /// <returns></returns>
-        private IIsoMount doMountISO(string isoPath)
+        private IIsoMount DoMountISO(string isoPath)
         {
-            char let = MountUtil.MountDiskImage(isoPath);
-            if (!let.Equals("\0"))
+            WindowsMount m = new WindowsMount(this, Logger, isoPath);
+            try
             {
-                String mountPath = let.ToString() + ":\\";
-                IIsoMount m = new WindowsMount(this, isoPath, mountPath);
-                return m;
+                m.Mount();
             }
-            return null;
-        }
-
-        /// <summary>
-        /// –∂‘ÿiso
-        /// </summary>
-        /// <param name="isoPath"></param>
-        /// <returns></returns>
-        private void DoUnMountISO(string isoPath)
-        {
-            MountUtil.DismountDiskImage(isoPath);
+            catch (Exception ex)
+            {
+                Logger.Info(
+                    "[{0}] Unhandled exception removing mount point, exception is [{1}].",
+                    Name,
+                    ex.Message
+                );
+            }
+            return m;
         }
         #endregion
     }

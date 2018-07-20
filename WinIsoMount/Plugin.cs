@@ -12,7 +12,8 @@ namespace WinIsoMount
         {
 			Instance = this;
         }
-        private Guid _id = new Guid("04125D56-9CF3-4C98-BCF1-0456A2DDEAF8");
+        
+        private Guid _id = new Guid("70D61B47-5D41-456C-BAEC-F982AEDB96BF");
         public override Guid Id
         {
             get { return _id; }
