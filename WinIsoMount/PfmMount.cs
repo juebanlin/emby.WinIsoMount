@@ -5,7 +5,7 @@ using MediaBrowser.Model.Logging;
 namespace WinIsoMount
 {
 
-    internal class WindowsMount : IIsoMount
+    internal class PfmMount : IIsoMount
     {
 
         #region Private Fields
@@ -17,7 +17,7 @@ namespace WinIsoMount
 
         #region Constructor(s)
 
-        internal WindowsMount(WindowsMounter isoMounter,ILogger logger, string isoPath)
+        internal PfmMount(WindowsMounter isoMounter,ILogger logger, string isoPath)
         {
             IsoMounter = isoMounter;
             IsoPath = isoPath;

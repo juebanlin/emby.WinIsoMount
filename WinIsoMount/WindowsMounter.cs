@@ -47,11 +47,14 @@ namespace WinIsoMount
             {
                 string path = "D:\\test\\test.iso";
                 Logger.Debug("**********************WinIsoMount test path:"+ path);
-                WindowsMount w = new WindowsMount(this, Logger, path);
+                PfmMount w = new PfmMount(this, Logger, path);
                 w.Mount();
-                string testPath = w.MountedPath;
+                string mountedPath = w.MountedPath;
+                if(mountedPath!=null)
+                {
+                    Logger.Debug("**********************testMountPath success:" + mountedPath);
+                }
                 w.UnMount();
-                Logger.Debug("**********************testMountPath success");
             }
             catch (Exception ex)
             {
@@ -128,7 +131,7 @@ namespace WinIsoMount
         /// <returns></returns>
         private IIsoMount DoMountISO(string isoPath)
         {
-            WindowsMount m = new WindowsMount(this, Logger, isoPath);
+            PfmMount m = new PfmMount(this, Logger, isoPath);
             try
             {
                 m.Mount();
