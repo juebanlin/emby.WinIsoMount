@@ -89,6 +89,11 @@ namespace WinIsoMount
                 Logger.Debug("is not isoPath:"+path);
                 return false;
             }
+            if (!PfmMount.CheckEnvironment())
+            {
+                Logger.Error("ERROR: checkEnvironment is false.\n");
+                return false;
+            }
             return true;
         }
 

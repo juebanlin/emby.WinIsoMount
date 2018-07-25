@@ -54,14 +54,30 @@ namespace WinIsoMount
 
         #endregion
 
+        static internal bool CheckEnvironment()
+        {
+            /**
+             *      public const int instNotInstalled = 3;
+                    public const int instOldVersion = 2;
+                    public const int instOldBuild = 1;
+                    public const int instInstalled = 0;
+             */
+            if (Pfm.InstallCheck() != Pfm.instInstalled)
+            {
+                return false;
+            }
+            return true;
+        }
+
         internal void Mount()
         {
             if(MountedPath!=null)
             {
                 return;
             }
-            if (Pfm.InstallCheck() != Pfm.instInstalled)
+            if (!CheckEnvironment())
             {
+                Logger.Error("ERROR: checkEnvironment is false.\n");
                 return;
             }
             Pfm.Api api = null;
