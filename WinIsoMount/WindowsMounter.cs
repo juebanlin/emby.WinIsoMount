@@ -7,63 +7,73 @@ using MediaBrowser.Model.IO;
 using MediaBrowser.Model.Logging;
 using MediaBrowser.Model.System;
 using System.Collections.Generic;
+using MediaBrowser.Controller.MediaEncoding;
+using MediaBrowser.Model.Entities;
 
-namespace WinIsoMount
+namespace IsoMounter
 {
-    public class WindowsMounter : IIsoMounter
+    public class WindowsMounter : IMediaMounter
     {
         #region Private Fields
 
         private readonly ILogger Logger;
         private readonly IEnvironmentInfo EnvironmentInfo;
-        private readonly IIsoManager IsoManager;
+        private readonly IMediaMountManager IsoManager;
         private readonly IFileSystem FileSystem;
         private readonly IProcessFactory ProcessFactory;
+        private readonly IMediaEncoder MediaEncoder;
 
         #endregion
 
         #region Constructor(s)
 
-        public WindowsMounter(ILogger logger, IEnvironmentInfo environment, IIsoManager isoManager,IProcessFactory processFactory, IFileSystem fileSystem )
+        public WindowsMounter(ILogger logger, IEnvironmentInfo environment, IMediaMountManager isoManager,IProcessFactory processFactory, IFileSystem fileSystem , IMediaEncoder mediaEncoder)
         {
             Logger = logger;
             EnvironmentInfo = environment;
             IsoManager = isoManager;
             FileSystem = fileSystem;
             ProcessFactory = processFactory;
-            Logger.Debug("**********************WinIsoMount init start");
-            if (isoManager != null)
+            MediaEncoder = mediaEncoder;
+            Logger.Debug("**********************WinIsoMount init start",null);
+            test();
+        }
+
+        #endregion
+
+        
+        private void test()
+        {
+            if (IsoManager != null)
             {
                 /**
                  * 
                 */
-                List<IIsoMounter> list = new List<IIsoMounter>();
+                List<IMediaMounter> list = new List<IMediaMounter>();
                 list.Add(this);
-                isoManager.AddParts(list);
-                Logger.Debug("isoManager init:");
+                IsoManager.AddParts(list);
+                Logger.Debug("isoManager init:", null);
             }
-            Logger.Debug("**********************WinIsoMount inited");
+            Logger.Debug("**********************WinIsoMount inited", null);
             try
             {
                 string path = "D:\\test\\test.iso";
-                Logger.Debug("**********************WinIsoMount test path:"+ path);
-                PfmMount w = new PfmMount(this, Logger, path);
+                Logger.Debug("**********************WinIsoMount test path:" + path, null);
+                PfmMount w = new PfmMount(this, MediaEncoder, Logger, path, MediaContainer.DvdIso);
                 w.Mount();
                 string mountedPath = w.MountedPath;
-                if(mountedPath!=null)
+                if (mountedPath != null)
                 {
-                    Logger.Debug("**********************testMountPath success:" + mountedPath);
+                    Logger.Debug("**********************testMountPath success:" + mountedPath, null);
                 }
                 w.UnMount();
             }
             catch (Exception ex)
             {
-                Logger.Info( "**********************testMountPath fail,ex:{0}",ex.Message);
+                Logger.Info("**********************testMountPath fail,ex:{0}", ex.Message, null);
             }
         }
-
-        #endregion
-
+        
         #region Interface Implementation for IIsoMounter
 
         public string Name
@@ -76,9 +86,9 @@ namespace WinIsoMount
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public bool CanMount(string path)
+        public bool CanMount(string path, string container)
         {
-            Logger.Debug("is canMount isoPath:"+ path);
+            Logger.Debug("is canMount isoPath:"+ path, null);
             if (EnvironmentInfo.OperatingSystem != MediaBrowser.Model.System.OperatingSystem.Windows)
             {
                 return false;
@@ -86,12 +96,12 @@ namespace WinIsoMount
             bool isIsoPath = string.Equals(Path.GetExtension(path), ".iso", StringComparison.OrdinalIgnoreCase);
             if (!isIsoPath)
             {
-                Logger.Debug("is not isoPath:"+path);
+                Logger.Debug("is not isoPath:"+path, null);
                 return false;
             }
             if (!PfmMount.CheckEnvironment())
             {
-                Logger.Error("ERROR: checkEnvironment is false.\n");
+                Logger.Error("ERROR: checkEnvironment is false.\n", null);
                 return false;
             }
             return true;
@@ -103,9 +113,9 @@ namespace WinIsoMount
         /// <param name="isoPath"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public Task<IIsoMount> Mount(string isoPath, CancellationToken cancellationToken)
+        public Task<IMediaMount> Mount(string isoPath, string container, CancellationToken cancellationToken)
         {
-            return new Task<IIsoMount>(() => { return DoMountISO(isoPath); });
+            return new Task<IMediaMount>(() => { return DoMountISO(isoPath, container); });
         }
         #endregion
 
@@ -134,9 +144,9 @@ namespace WinIsoMount
         /// <param name="isoPath"></param>
         /// <param name="mountedISO"></param>
         /// <returns></returns>
-        private IIsoMount DoMountISO(string isoPath)
+        private IMediaMount DoMountISO(string isoPath,string container)
         {
-            PfmMount m = new PfmMount(this, Logger, isoPath);
+            PfmMount m = new PfmMount(this,MediaEncoder, Logger, isoPath, container);
             try
             {
                 m.Mount();

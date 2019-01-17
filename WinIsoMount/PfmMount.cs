@@ -1,27 +1,34 @@
 using System;
+using MediaBrowser.Controller.MediaEncoding;
+using MediaBrowser.Model.Entities;
 using MediaBrowser.Model.IO;
 using MediaBrowser.Model.Logging;
+using MediaBrowser.Model.MediaInfo;
 
-namespace WinIsoMount
+namespace IsoMounter
 {
 
-    internal class PfmMount : IIsoMount
+    internal class PfmMount : IMediaMount
     {
 
         #region Private Fields
-        private readonly WindowsMounter IsoMounter;
-        private readonly ILogger Logger;
+        private readonly IMediaEncoder mediaEncoder;
+        private readonly WindowsMounter isoMounter;
+        private readonly ILogger logger;
+        private readonly string container;
         private Pfm.Mount mount;
         private Pfm.FileMount fileMount;
         #endregion
 
         #region Constructor(s)
 
-        internal PfmMount(WindowsMounter isoMounter,ILogger logger, string isoPath)
+        internal PfmMount(WindowsMounter isoMounter,IMediaEncoder mediaEncoder,ILogger logger, string isoPath, string container)
         {
-            IsoMounter = isoMounter;
+            this.isoMounter = isoMounter;
+            this.mediaEncoder=mediaEncoder;
+            this.logger = logger;
+            this.container = container;
             IsoPath = isoPath;
-            Logger = logger;
         }
 
         #endregion
@@ -40,7 +47,7 @@ namespace WinIsoMount
             }
             catch (Exception ex)
             {
-                Logger.Info("WindowsMount Unhandled exception removing mount point, exception is [{0}].",ex.Message);
+                logger.Info("WindowsMount Unhandled exception removing mount point, exception is [{0}].",ex.Message);
             }
             GC.SuppressFinalize(this);
         }
@@ -51,6 +58,8 @@ namespace WinIsoMount
 
         public string IsoPath { get; private set; }
         public string MountedPath { get; private set; }
+        public string MountedFolderPath { get; private set; }
+        public MediaProtocol MountedProtocol { get; set; }
 
         #endregion
 
@@ -77,7 +86,7 @@ namespace WinIsoMount
             }
             if (!CheckEnvironment())
             {
-                Logger.Error("ERROR: checkEnvironment is false.\n");
+                logger.Error("ERROR:{0}.\n", "checkEnvironment is false");
                 return;
             }
             Pfm.Api api = null;
@@ -92,17 +101,32 @@ namespace WinIsoMount
             error = fileMount.Start(fmp);
             if (error != Pfm.errorSuccess)
             {
-                Logger.Error("ERROR: {0} Unable to create mount.\n", error);
+                logger.Error("ERROR: {0} Unable to create mount.\n", error);
                 return;
             }
             error = fileMount.WaitReady();
             if (error != Pfm.errorSuccess)
             {
-                Logger.Error("ERROR: {0} Unable to create mount.\n", error);
+                logger.Error("ERROR: {0} Unable to create mount.\n", error);
                 return;
             }
             mount = fileMount.GetMount();
             MountedPath = mount.GetMountPoint();
+            //TODO
+            var mountFolder = MountedPath;
+            MountedProtocol = MediaProtocol.File;
+            if (string.Equals(container, MediaContainer.DvdIso, StringComparison.OrdinalIgnoreCase))
+            {
+                var files = mediaEncoder.GetDvdVobFiles(mountFolder);
+
+                var mountedPath = string.Join("|", files);
+            }
+            else if (string.Equals(container, MediaContainer.BlurayIso, StringComparison.OrdinalIgnoreCase))
+            {
+                var files = mediaEncoder.GetBlurayM2tsFiles(mountFolder);
+
+                var mountedPath = string.Join("|", files);
+            }
         }
 
         internal void UnMount()

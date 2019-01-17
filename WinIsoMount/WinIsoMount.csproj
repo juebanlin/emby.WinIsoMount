@@ -1,16 +1,22 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <AssemblyVersion>1.0.3.0</AssemblyVersion>
+    <FileVersion>1.0.3.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MediaBrowser.Common" Version="3.5.0" />
-    <PackageReference Include="MediaBrowser.Server.Core" Version="3.5.0" />
+    <None Remove="thumb.jpg" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="lib\" />
+    <EmbeddedResource Include="thumb.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediaBrowser.Common" Version="4.0.0.2" />
+    <PackageReference Include="MediaBrowser.Server.Core" Version="4.0.0.2" />
   </ItemGroup>
 
   <ItemGroup>

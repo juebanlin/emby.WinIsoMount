@@ -1,16 +1,18 @@
 ﻿using System;
+using System.IO;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Common.Plugins;
+using MediaBrowser.Model.Drawing;
 using MediaBrowser.Model.Serialization;
 using WinIsoMount.Configuration;
 
-namespace WinIsoMount
+namespace IsoMounter
 {
     public class Plugin : BasePlugin<PluginConfiguration>
     {
         public Plugin(IApplicationPaths applicationPaths, IXmlSerializer xmlSerializer) : base(applicationPaths, xmlSerializer)
         {
-			Instance = this;
+			
         }
         
         private Guid _id = new Guid("70D61B47-5D41-456C-BAEC-F982AEDB96BF");
@@ -25,7 +27,7 @@ namespace WinIsoMount
         /// <value>The name.</value>
         public override string Name
         {
-            get { return "WinIsoMount"; }
+            get { return "WinIsoMounter"; }
         }
 
         /// <summary>
@@ -39,11 +41,19 @@ namespace WinIsoMount
                 return "Mount and stream ISO contents";
             }
         }
-		
-		/// <summary>
-        /// Gets the instance.
-        /// </summary>
-        /// <value>The instance.</value>
-		public static Plugin Instance { get; private set; }
+
+        public Stream GetThumbImage()
+        {
+            var type = GetType();
+            return type.Assembly.GetManifestResourceStream(type.Namespace + ".thumb.jpg");
+        }
+
+        public ImageFormat ThumbImageFormat
+        {
+            get
+            {
+                return ImageFormat.Jpg;
+            }
+        }
     }
 }
