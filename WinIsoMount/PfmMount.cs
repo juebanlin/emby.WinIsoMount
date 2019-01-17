@@ -80,8 +80,9 @@ namespace IsoMounter
 
         internal void Mount()
         {
-            if(MountedPath!=null)
+            if (MountedPath!=null)
             {
+                logger.Debug("MountedPath is null", null);
                 return;
             }
             if (!CheckEnvironment())
@@ -98,6 +99,7 @@ namespace IsoMounter
             fmp.fileMountFlags |= Pfm.fileMountFlagMultiMount;//‘ –Ì÷ÿ∏¥π“‘ÿ
             fmp.mountFlags = Pfm.mountFlagReadOnly;//÷ª∂¡
             int error = 0;
+            logger.Debug("pfm do mount", null);
             error = fileMount.Start(fmp);
             if (error != Pfm.errorSuccess)
             {
@@ -112,27 +114,26 @@ namespace IsoMounter
             }
             mount = fileMount.GetMount();
             MountedPath = mount.GetMountPoint();
-            //TODO
-            var mountFolder = MountedPath;
+            MountedFolderPath= mount.GetMountPoint();
             MountedProtocol = MediaProtocol.File;
             if (string.Equals(container, MediaContainer.DvdIso, StringComparison.OrdinalIgnoreCase))
             {
-                var files = mediaEncoder.GetDvdVobFiles(mountFolder);
-
-                var mountedPath = string.Join("|", files);
+                var files = mediaEncoder.GetDvdVobFiles(MountedFolderPath);
+                MountedPath = string.Join("|", files);
             }
             else if (string.Equals(container, MediaContainer.BlurayIso, StringComparison.OrdinalIgnoreCase))
             {
-                var files = mediaEncoder.GetBlurayM2tsFiles(mountFolder);
-
-                var mountedPath = string.Join("|", files);
+                var files = mediaEncoder.GetBlurayM2tsFiles(MountedFolderPath);
+                MountedPath = string.Join("|", files);
             }
+            logger.Debug("pfm mount result,MountedPath: [{0}],MountedFolderPath:[{1}]", MountedPath, MountedFolderPath);
         }
 
         internal void UnMount()
         {
             if (fileMount != null)
             {
+                logger.Debug("pfm UnMount",null);
                 fileMount.Cancel();
                 fileMount.Detach();
                 fileMount.Dispose();

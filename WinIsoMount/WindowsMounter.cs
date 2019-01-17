@@ -88,9 +88,10 @@ namespace IsoMounter
         /// <returns></returns>
         public bool CanMount(string path, string container)
         {
-            Logger.Debug("is canMount isoPath:"+ path, null);
+            Logger.Debug("is canMount isoPath:[{0}],container:[{1}]", path,container);
             if (EnvironmentInfo.OperatingSystem != MediaBrowser.Model.System.OperatingSystem.Windows)
             {
+                Logger.Debug("is canMount not windows",null);
                 return false;
             }
             bool isIsoPath = string.Equals(Path.GetExtension(path), ".iso", StringComparison.OrdinalIgnoreCase);
@@ -115,7 +116,25 @@ namespace IsoMounter
         /// <returns></returns>
         public Task<IMediaMount> Mount(string isoPath, string container, CancellationToken cancellationToken)
         {
-            return new Task<IMediaMount>(() => { return DoMountISO(isoPath, container); });
+            Logger.Debug("Mount isoPath:[{0}],container:[{1}]", isoPath, container);
+            PfmMount m = new PfmMount(this, MediaEncoder, Logger, isoPath, container);
+            try
+            {
+                m.Mount();
+                if (m.MountedPath != null)
+                {
+                    Logger.Debug("Mount success isoPath:[{0}],container:[{1}]", isoPath, container);
+                    return Task.FromResult<IMediaMount>(m);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Info("WindowsMount Unhandled exception removing mount point, exception is [{0}].", ex.Message);
+            }
+            throw new IOException(String.Format(
+                    "An error occurred trying to mount image [$0].",
+                    isoPath
+                ));
         }
         #endregion
 
@@ -137,30 +156,7 @@ namespace IsoMounter
 
 
         #region Private Methods
-
-        /// <summary>
-        /// ÷¥––π“‘ÿ
-        /// </summary>
-        /// <param name="isoPath"></param>
-        /// <param name="mountedISO"></param>
-        /// <returns></returns>
-        private IMediaMount DoMountISO(string isoPath,string container)
-        {
-            PfmMount m = new PfmMount(this,MediaEncoder, Logger, isoPath, container);
-            try
-            {
-                m.Mount();
-            }
-            catch (Exception ex)
-            {
-                Logger.Info(
-                    "[{0}] Unhandled exception removing mount point, exception is [{1}].",
-                    Name,
-                    ex.Message
-                );
-            }
-            return m;
-        }
+   
         #endregion
     }
 }
