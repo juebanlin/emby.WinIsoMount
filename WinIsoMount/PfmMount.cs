@@ -126,6 +126,11 @@ namespace IsoMounter
                 var files = mediaEncoder.GetBlurayM2tsFiles(MountedFolderPath);
                 MountedPath = string.Join("|", files);
             }
+            else if (string.Equals(container, MediaContainer.Iso, StringComparison.OrdinalIgnoreCase))
+            {
+                var files = mediaEncoder.GetBlurayM2tsFiles(MountedFolderPath);
+                MountedPath = string.Join("|", files);
+            }
             logger.Debug("pfm mount result,MountedPath: [{0}],MountedFolderPath:[{1}]", MountedPath, MountedFolderPath);
         }
 

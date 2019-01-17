@@ -88,7 +88,7 @@ namespace IsoMounter
         /// <returns></returns>
         public bool CanMount(string path, string container)
         {
-            Logger.Debug("is canMount isoPath:[{0}],container:[{1}]", path,container);
+            Logger.Debug("entry is canMount isoPath:[{0}],container:[{1}]", path,container);
             if (EnvironmentInfo.OperatingSystem != MediaBrowser.Model.System.OperatingSystem.Windows)
             {
                 Logger.Debug("is canMount not windows",null);
