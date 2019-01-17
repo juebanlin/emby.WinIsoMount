@@ -138,7 +138,7 @@ namespace IsoMounter
         {
             if (fileMount != null)
             {
-                logger.Debug("pfm UnMount",null);
+                logger.Debug("pfm do UnMount,isoPath:[{0}]",IsoPath);
                 fileMount.Cancel();
                 fileMount.Detach();
                 fileMount.Dispose();
