@@ -57,7 +57,12 @@ namespace IsoMounter
             Logger.Debug("**********************WinIsoMount inited", null);
             try
             {
-                string path = "D:\\test\\test.iso";
+                string path = @"D:\test\test.iso";
+                if (!File.Exists(path))
+                {
+                    Logger.Debug("**********************WinIsoMount test file not found,ignore test", null);
+                    return;
+                }
                 Logger.Debug("**********************WinIsoMount test path:" + path, null);
                 PfmMount w = new PfmMount(this, MediaEncoder, Logger, path, MediaContainer.DvdIso);
                 w.Mount();
