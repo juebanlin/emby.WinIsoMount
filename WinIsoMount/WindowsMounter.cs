@@ -65,7 +65,7 @@ namespace IsoMounter
                     return;
                 }
                 Logger.Debug("**********************WinIsoMount test path:" + testPath, null);
-                PfmMount w = new PfmMount(this, MediaEncoder, Logger, testPath, MediaContainer.DvdIso.ToString());
+                PfmMount w = new PfmMount(this, MediaEncoder, Logger, FileSystem, testPath, MediaContainer.DvdIso.ToString());
                 w.Mount();
                 string mountedPath = w.MountedPath;
                 if (mountedPath != null)
@@ -125,7 +125,7 @@ namespace IsoMounter
         public Task<IMediaMount> Mount(string isoPath, string container, CancellationToken cancellationToken)
         {
             Logger.Debug("Mount isoPath:[{0}],container:[{1}]", isoPath, container);
-            PfmMount m = new PfmMount(this, MediaEncoder, Logger, isoPath, container);
+            PfmMount m = new PfmMount(this, MediaEncoder, Logger, FileSystem, isoPath, container);
             try
             {
                 m.Mount();
