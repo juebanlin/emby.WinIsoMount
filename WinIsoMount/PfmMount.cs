@@ -121,19 +121,19 @@ namespace IsoMounter
             if (string.Equals(container, MediaContainer.DvdIso.ToString(), StringComparison.OrdinalIgnoreCase))
             {
                 //var files = mediaEncoder.GetDvdVobFiles(MountedFolderPath);
-                var files = fileSystem.GetFilePaths(MountedFolderPath, new string[] { ".vob" }, false, false);
+                var files = fileSystem.GetFilePaths(MountedFolderPath, new string[] { ".vob" }, false, true);
                 MountedPath = string.Join("|", files);
             }
             else if (string.Equals(container, MediaContainer.BlurayIso.ToString(), StringComparison.OrdinalIgnoreCase))
             {
                 //var files = mediaEncoder.GetBlurayM2tsFiles(MountedFolderPath);
-                var files = fileSystem.GetFilePaths(MountedFolderPath, new string[] { ".m2tfs" }, false, false);
+                var files = fileSystem.GetFilePaths(MountedFolderPath, new string[] { ".m2tfs" }, false, true);
                 MountedPath = string.Join("|", files);
             }
             else if (string.Equals(container, MediaContainer.Iso.ToString(), StringComparison.OrdinalIgnoreCase))
             {
                 //var files = mediaEncoder.GetBlurayM2tsFiles(MountedFolderPath);
-                var files = fileSystem.GetFilePaths(MountedFolderPath, new string[] { ".m2tfs" }, false, false);
+                var files = fileSystem.GetFilePaths(MountedFolderPath, new string[] { ".m2tfs" }, false, true);
                 MountedPath = string.Join("|", files);
             }
             logger.Debug("pfm mount result,MountedPath: [{0}],MountedFolderPath:[{1}]", MountedPath, MountedFolderPath);
