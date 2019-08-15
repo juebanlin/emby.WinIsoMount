@@ -57,14 +57,15 @@ namespace IsoMounter
             Logger.Debug("**********************WinIsoMount inited", null);
             try
             {
-                string path = @"D:\test\test.iso";
-                if (!File.Exists(path))
+                string testPath = @"D:\test.iso";
+                testPath = Environment.GetEnvironmentVariable("WinIsoTestIsoPath");
+                if (!File.Exists(testPath))
                 {
                     Logger.Debug("**********************WinIsoMount test file not found,ignore test", null);
                     return;
                 }
-                Logger.Debug("**********************WinIsoMount test path:" + path, null);
-                PfmMount w = new PfmMount(this, MediaEncoder, Logger, path, MediaContainer.DvdIso);
+                Logger.Debug("**********************WinIsoMount test path:" + testPath, null);
+                PfmMount w = new PfmMount(this, MediaEncoder, Logger, testPath, MediaContainer.DvdIso.ToString());
                 w.Mount();
                 string mountedPath = w.MountedPath;
                 if (mountedPath != null)
@@ -85,6 +86,8 @@ namespace IsoMounter
         {
             get { return "WinIsoMount"; }
         }
+
+        string IMediaMounter.Name => throw new NotImplementedException();
 
         /// <summary>
         /// 是否能挂载此文件
@@ -150,18 +153,33 @@ namespace IsoMounter
             GC.SuppressFinalize(this);
         }
 
+        Task<IMediaMount> IMediaMounter.Mount(ReadOnlyMemory<char> mediaPath, ReadOnlyMemory<char> container, CancellationToken cancellationToken)
+        {
+            return Mount(mediaPath.ToString(), container.ToString(), cancellationToken);
+        }
+
+        bool IMediaMounter.CanMount(ReadOnlySpan<char> mediaPath, ReadOnlySpan<char> container)
+        {
+            return CanMount(mediaPath.ToString(), container.ToString());
+        }
+
+        void IDisposable.Dispose()
+        {
+            Dispose();
+        }
+
         #endregion
 
         #region Internal Methods
 
-  
+
 
         #endregion
 
 
 
         #region Private Methods
-   
+
         #endregion
     }
 }

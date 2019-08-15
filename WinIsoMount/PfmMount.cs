@@ -116,17 +116,17 @@ namespace IsoMounter
             MountedPath = mount.GetMountPoint();
             MountedFolderPath= mount.GetMountPoint();
             MountedProtocol = MediaProtocol.File;
-            if (string.Equals(container, MediaContainer.DvdIso, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(container, MediaContainer.DvdIso.ToString(), StringComparison.OrdinalIgnoreCase))
             {
                 var files = mediaEncoder.GetDvdVobFiles(MountedFolderPath);
                 MountedPath = string.Join("|", files);
             }
-            else if (string.Equals(container, MediaContainer.BlurayIso, StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(container, MediaContainer.BlurayIso.ToString(), StringComparison.OrdinalIgnoreCase))
             {
                 var files = mediaEncoder.GetBlurayM2tsFiles(MountedFolderPath);
                 MountedPath = string.Join("|", files);
             }
-            else if (string.Equals(container, MediaContainer.Iso, StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(container, MediaContainer.Iso.ToString(), StringComparison.OrdinalIgnoreCase))
             {
                 var files = mediaEncoder.GetBlurayM2tsFiles(MountedFolderPath);
                 MountedPath = string.Join("|", files);
