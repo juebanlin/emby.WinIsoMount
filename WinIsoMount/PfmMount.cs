@@ -14,6 +14,7 @@ namespace IsoMounter
         #region Private Fields
         private readonly IMediaEncoder mediaEncoder;
         private readonly WindowsMounter isoMounter;
+        private readonly IFileSystem fileSystem;
         private readonly ILogger logger;
         private readonly string container;
         private Pfm.Mount mount;
@@ -22,12 +23,13 @@ namespace IsoMounter
 
         #region Constructor(s)
 
-        internal PfmMount(WindowsMounter isoMounter,IMediaEncoder mediaEncoder,ILogger logger, string isoPath, string container)
+        internal PfmMount(WindowsMounter isoMounter,IMediaEncoder mediaEncoder,ILogger logger, IFileSystem fileSystem, string isoPath, string container)
         {
             this.isoMounter = isoMounter;
             this.mediaEncoder=mediaEncoder;
             this.logger = logger;
             this.container = container;
+            this.fileSystem = fileSystem;
             IsoPath = isoPath;
         }
 
@@ -118,17 +120,20 @@ namespace IsoMounter
             MountedProtocol = MediaProtocol.File;
             if (string.Equals(container, MediaContainer.DvdIso.ToString(), StringComparison.OrdinalIgnoreCase))
             {
-                var files = mediaEncoder.GetDvdVobFiles(MountedFolderPath);
+                //var files = mediaEncoder.GetDvdVobFiles(MountedFolderPath);
+                var files = fileSystem.GetFilePaths(MountedFolderPath, new string[] { ".vob" }, false, false);
                 MountedPath = string.Join("|", files);
             }
             else if (string.Equals(container, MediaContainer.BlurayIso.ToString(), StringComparison.OrdinalIgnoreCase))
             {
-                var files = mediaEncoder.GetBlurayM2tsFiles(MountedFolderPath);
+                //var files = mediaEncoder.GetBlurayM2tsFiles(MountedFolderPath);
+                var files = fileSystem.GetFilePaths(MountedFolderPath, new string[] { ".m2tfs" }, false, false);
                 MountedPath = string.Join("|", files);
             }
             else if (string.Equals(container, MediaContainer.Iso.ToString(), StringComparison.OrdinalIgnoreCase))
             {
-                var files = mediaEncoder.GetBlurayM2tsFiles(MountedFolderPath);
+                //var files = mediaEncoder.GetBlurayM2tsFiles(MountedFolderPath);
+                var files = fileSystem.GetFilePaths(MountedFolderPath, new string[] { ".m2tfs" }, false, false);
                 MountedPath = string.Join("|", files);
             }
             logger.Debug("pfm mount result,MountedPath: [{0}],MountedFolderPath:[{1}]", MountedPath, MountedFolderPath);
